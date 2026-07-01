@@ -118,7 +118,7 @@ jobs:
       - name: Build and push image
         uses: docker/build-push-action@v5
         with:
-          context: ./${{ matrix.service }}
+          context: ./mercasimple/${{ matrix.service }}
 
           # push: true → A diferencia del CI, AQUÍ SÍ subimos la imagen.
           push: true
