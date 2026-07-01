@@ -101,7 +101,7 @@ jobs:
           cache: npm                               # Tipo de caché (también soporta "yarn", "pnpm")
           # GitHub cachea la carpeta ~/.npm basándose en el hash del package-lock.json.
           # Si el lock no cambió, npm ci reutiliza el caché → mucho más rápido.
-          cache-dependency-path: ../../mercasimple/${{ matrix.service }}/package-lock.json
+          cache-dependency-path: mercasimple/${{ matrix.service }}/package-lock.json
 
       # Step 3: Instala dependencias de forma REPRODUCIBLE.
       # "npm ci" (clean install) es más estricto que "npm install":
@@ -109,7 +109,7 @@ jobs:
       #   - Falla si package.json y package-lock.json están desincronizados
       #   - No modifica el lock file → builds deterministas
       - name: Install dependencies
-        working-directory: ${{ matrix.service }}   # Entra a la carpeta del servicio
+        working-directory: mercasimple/${{ matrix.service }}   # Entra a la carpeta del servicio
         run: npm ci
 
       # Step 4: Análisis estático del código (linting).
@@ -118,14 +118,14 @@ jobs:
       # Útil mientras se termina de configurar el linter en todos los servicios.
       # En producción deberías quitar el "|| true" para que el lint sea obligatorio.
       - name: Lint
-        working-directory: ${{ matrix.service }}
+        working-directory: mercasimple/${{ matrix.service }}
         run: npm run lint || true
 
       # Step 5: Ejecuta los tests unitarios Y genera reporte de cobertura.
       # "npm run test:cov" es equivalente a: jest --coverage
       # Si la cobertura cae del umbral definido en package.json (70%), el job FALLA.
       - name: Run unit tests with coverage
-        working-directory: ${{ matrix.service }}
+        working-directory: mercasimple/${{ matrix.service }}
         run: npm run test:cov 
         env:
           # La variable CI=true hace que Jest no use colores en el output
@@ -141,7 +141,7 @@ jobs:
           # Nombre único por servicio para no sobrescribir entre sí
           name: coverage-${{ matrix.service }}
           # Ruta del reporte generado por Jest (carpeta coverage/)
-          path: ${{ matrix.service }}/coverage/
+          path: mercasimple/${{ matrix.service }}/coverage/
           # Después de 7 días GitHub elimina el artifact automáticamente
           retention-days: 7
 
@@ -172,34 +172,36 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: coverage-auth-service
-          path: auth-service/coverage
+          path: mercasimple/auth-service/coverage
 
       - name: Download catalog-service coverage
         uses: actions/download-artifact@v4
         with:
           name: coverage-catalog-service
-          path: catalog-service/coverage
+          path: mercasimple/catalog-service/coverage
 
       - name: Download orders-service coverage
         uses: actions/download-artifact@v4
         with:
           name: coverage-orders-service
-          path: orders-service/coverage
+          path: mercasimple/orders-service/coverage
 
       - name: Download payments-service coverage
         uses: actions/download-artifact@v4
         with:
           name: coverage-payments-service
-          path: payments-service/coverage
+          path: mercasimple/payments-service/coverage
 
       # Jest escribe las rutas del lcov relativas al servicio (ej: "SF:src/..."),
-      # pero Sonar analiza desde la raíz del monorepo, donde el archivo real está
-      # en "<servicio>/src/...". Aquí prefijamos cada ruta con el nombre del
-      # servicio para que Sonar cruce la cobertura con el código. Sin esto: 0%.
+      # pero Sonar las necesita relativas a su base (mercasimple), donde el archivo
+      # real está en "<servicio>/src/...". Aquí prefijamos cada ruta con el nombre
+      # del servicio para que Sonar cruce la cobertura con el código. Sin esto: 0%.
+      # Los lcov viven en mercasimple/<servicio>/coverage; el prefijo SF queda
+      # relativo a la base de Sonar (projectBaseDir=mercasimple más abajo).
       - name: Fix coverage paths for monorepo
         run: |
           for svc in auth-service catalog-service orders-service payments-service; do
-            f="$svc/coverage/lcov.info"
+            f="mercasimple/$svc/coverage/lcov.info"
             if [ -f "$f" ]; then
               sed -i "s#^SF:#SF:$svc/#" "$f"
               echo "Rutas de cobertura corregidas en $f"
@@ -208,10 +210,13 @@ jobs:
             fi
           done
 
-      # Ejecuta el análisis. La configuración (projectKey, organization, rutas de
-      # cobertura, quality gate) se lee de sonar-project.properties en la raíz.
+      # Ejecuta el análisis. projectBaseDir=mercasimple hace que Sonar tome esa
+      # carpeta como raíz del proyecto: lee mercasimple/sonar-project.properties y
+      # resuelve fuentes y cobertura relativas a ella (auth-service/src, etc.).
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v5
+        with:
+          projectBaseDir: mercasimple
         env:
           # Token guardado en los secrets del repo (Settings → Secrets → Actions).
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -256,8 +261,8 @@ jobs:
       - name: Build Docker image
         uses: docker/build-push-action@v5
         with:
-          # Ruta al Dockerfile del servicio (./auth-service, ./catalog-service, etc.)
-          context: ./${{ matrix.service }}
+          # Ruta al Dockerfile del servicio (./mercasimple/auth-service, etc.)
+          context: ./mercasimple/${{ matrix.service }}
 
           # push: false → Solo construye localmente para validar. No sube a ningún registro.
           push: false
@@ -311,10 +316,10 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
-          cache-dependency-path: ${{ matrix.service }}/package-lock.json
+          cache-dependency-path: mercasimple/${{ matrix.service }}/package-lock.json
 
       - name: Install dependencies
-        working-directory: ${{ matrix.service }}
+        working-directory: mercasimple/${{ matrix.service }}
         run: npm ci
 
       # "npm audit" analiza el package-lock.json contra la base de datos de
@@ -323,6 +328,6 @@ jobs:
       # Las vulnerabilidades LOW y MODERATE se reportan pero no bloquean.
       # "|| true" → no bloquea el build todavía; quitar en producción madura.
       - name: Audit dependencies
-        working-directory: ${{ matrix.service }}
+        working-directory: mercasimple/${{ matrix.service }}
         run: npm audit --audit-level=high || true
 #probando
