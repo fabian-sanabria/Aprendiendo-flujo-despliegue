@@ -11,7 +11,7 @@
 #                                      └→ docker-build (×5) → scan (×4)
 #
 # REGLA DE ORO:
-#   Si cualquier job de este pipeline falla → no se puede hacer merge.
+#   Si cualquier job de este pipeline falla → no se puede hacer mergeeeeee.
 # ─────────────────────────────────────────────────────────────────────────────
 
 # Nombre del workflow. Aparece en la pestaña "Actions" de GitHub.
