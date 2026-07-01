@@ -101,7 +101,7 @@ jobs:
           cache: npm                               # Tipo de caché (también soporta "yarn", "pnpm")
           # GitHub cachea la carpeta ~/.npm basándose en el hash del package-lock.json.
           # Si el lock no cambió, npm ci reutiliza el caché → mucho más rápido.
-          cache-dependency-path: ${{ matrix.service }}/package-lock.json
+          cache-dependency-path: ../../mercasimple/${{ matrix.service }}/package-lock.json
 
       # Step 3: Instala dependencias de forma REPRODUCIBLE.
       # "npm ci" (clean install) es más estricto que "npm install":
