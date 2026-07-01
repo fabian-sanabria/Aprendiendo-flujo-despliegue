@@ -331,3 +331,4 @@ jobs:
         working-directory: mercasimple/${{ matrix.service }}
         run: npm audit --audit-level=high || true
 #probando
+#prueba
