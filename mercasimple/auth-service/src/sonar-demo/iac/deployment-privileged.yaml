@@ -1,0 +1,40 @@
+# ======================================================
+# SONAR TEST FILE - GENERATED ONLY FOR SONARQUBE TESTING - REMOVE AFTER VALIDATION
+# ======================================================
+# Regla Sonar esperada: S6428 (contenedor privilegiado), S6433 (capabilities peligrosas),
+#   escalada de privilegios y ejecución como root (runAsUser 0), imagen con tag latest.
+# Qué debe detectar SonarCloud: securityContext.privileged=true, allowPrivilegeEscalation=true,
+#   runAsUser=0, capabilities.add ALL e imagen con tag mutable 'latest'.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: privileged-demo
+  labels:
+    app: privileged-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: privileged-demo
+  template:
+    metadata:
+      labels:
+        app: privileged-demo
+    spec:
+      containers:
+        - name: app
+          # Noncompliant: imagen con tag mutable 'latest'
+          image: myapp:latest
+          securityContext:
+            # Noncompliant S6428: contenedor en modo privilegiado
+            privileged: true
+            # Noncompliant: permite la escalada de privilegios
+            allowPrivilegeEscalation: true
+            # Noncompliant: ejecutar el contenedor como root (UID 0)
+            runAsUser: 0
+            capabilities:
+              # Noncompliant S6433: se añaden TODAS las capabilities del kernel
+              add:
+                - ALL
+          ports:
+            - containerPort: 8080

@@ -1,0 +1,35 @@
+# ======================================================
+# SONAR TEST FILE - GENERATED ONLY FOR SONARQUBE TESTING - REMOVE AFTER VALIDATION
+# ======================================================
+# Regla Sonar esperada: exposición de puerto sensible (SSH 22), runAsNonRoot=false,
+#   ausencia de securityContext y de límites de recursos (CPU/memoria).
+# Qué debe detectar SonarCloud: containerPort 22 (SSH), runAsNonRoot en false permite root,
+#   falta de resources.limits y de un securityContext restrictivo.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: insecure-ports-demo
+  labels:
+    app: insecure-ports-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: insecure-ports-demo
+  template:
+    metadata:
+      labels:
+        app: insecure-ports-demo
+    spec:
+      securityContext:
+        # Noncompliant: permite explícitamente que el contenedor corra como root
+        runAsNonRoot: false
+      containers:
+        - name: app
+          image: myapp:1.0.0
+          ports:
+            # Noncompliant: exponer el puerto 22 (SSH) en un contenedor
+            - containerPort: 22
+          # Noncompliant: ausencia de resources.limits (sin límites de CPU/memoria)
+          # Noncompliant: ausencia de un securityContext a nivel de contenedor
+          #   (no se define readOnlyRootFilesystem ni allowPrivilegeEscalation: false)
