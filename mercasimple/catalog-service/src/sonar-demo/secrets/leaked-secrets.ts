@@ -10,7 +10,7 @@
  * Nota: TODOS los secretos son FICTICIOS, solo para probar la detección.
  */
 
-// AWS Access Key ID -> regla esperada S6290 (AWS credentials detection)
+// AWS Access Key ID -> regla esperada S6290 (AWS credentials detectionn)
 export const CATALOG_AWS_ACCESS_KEY_ID = 'AKIA4CATALOG7XZQ2LMN';
 
 // AWS Secret Access Key (40 chars) -> regla esperada S6290 (AWS secret key)
