@@ -1,0 +1,28 @@
+# ======================================================
+# SONAR TEST FILE - GENERATED ONLY FOR SONARQUBE TESTING - REMOVE AFTER VALIDATION
+# ======================================================
+# Regla Sonar esperada: (demostrativo) patrones inseguros equivalentes a los de Dockerfile/Kubernetes.
+# Qué debe detectar SonarCloud: NOTA IMPORTANTE -> docker-compose NO tiene un analizador dedicado
+#   en SonarQube/SonarCloud (a diferencia de Docker y Kubernetes que sí lo tienen). La cobertura de
+#   reglas aquí es limitada; este archivo es principalmente DEMOSTRATIVO de malas prácticas y puede
+#   no generar issues en Sonar.
+version: "3.8"
+services:
+  db:
+    image: postgres:latest
+    # Noncompliant (demostrativo): contenedor en modo privilegiado
+    privileged: true
+    # Noncompliant (demostrativo): usa la pila de red del host (rompe el aislamiento)
+    network_mode: host
+    # Noncompliant (demostrativo): comparte el namespace de PID del host
+    pid: host
+    volumes:
+      # Noncompliant (demostrativo): monta la raíz '/' del host dentro del contenedor
+      - /:/host
+    ports:
+      # Noncompliant (demostrativo): publica el puerto en todas las interfaces (0.0.0.0)
+      - "0.0.0.0:5432:5432"
+    environment:
+      # Noncompliant (demostrativo): secreto/credencial embebido en environment
+      POSTGRES_PASSWORD: SuperSecretPostgresPass123
+      API_TOKEN: hardcoded-api-token-abcdef123456

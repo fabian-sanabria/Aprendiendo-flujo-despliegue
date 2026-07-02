@@ -1,0 +1,41 @@
+# ======================================================
+# SONAR TEST FILE - GENERATED ONLY FOR SONARQUBE TESTING - REMOVE AFTER VALIDATION
+# ======================================================
+# Regla Sonar esperada: S6870 (uso de namespaces del host: hostNetwork/hostPID/hostIPC),
+#   S6433 (hostPath que monta el sistema de archivos del host).
+# Qué debe detectar SonarCloud: hostNetwork/hostPID/hostIPC en true rompen el aislamiento del pod,
+#   y un volumen hostPath montando '/' expone todo el filesystem del nodo.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: host-namespaces-demo
+  labels:
+    app: host-namespaces-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: host-namespaces-demo
+  template:
+    metadata:
+      labels:
+        app: host-namespaces-demo
+    spec:
+      # Noncompliant S6870: comparte la pila de red del host
+      hostNetwork: true
+      # Noncompliant S6870: comparte el namespace de procesos (PID) del host
+      hostPID: true
+      # Noncompliant S6870: comparte el namespace IPC del host
+      hostIPC: true
+      containers:
+        - name: app
+          image: myapp:1.0.0
+          volumeMounts:
+            - name: host-root
+              mountPath: /host
+      volumes:
+        # Noncompliant S6433: hostPath que monta la raíz '/' del nodo dentro del pod
+        - name: host-root
+          hostPath:
+            path: /
+            type: Directory
