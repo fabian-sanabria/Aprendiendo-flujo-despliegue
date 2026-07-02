@@ -21,30 +21,30 @@
  */
 
 // Regla esperada: S6290 - AWS Access Key ID codificada (formato AKIA...).
-export const AWS_ACCESS_KEY_ID = 'TEST_AKIAZ2XYQ7EXAMPLE123';
+export const AWS_ACCESS_KEY_ID = 'AKIAZ2XYQ7EXAMPLE123';
 
 // Regla esperada: S6292 - AWS Secret Access Key (40 chars base64-ish, ficticia).
-export const AWS_SECRET_ACCESS_KEY = 'TEST_wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEYZZ';
+export const AWS_SECRET_ACCESS_KEY = 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEYZZ';
 
 // Regla esperada: S6291 - GitHub Personal Access Token (formato ghp_...).
-export const GITHUB_TOKEN = 'TEST_ghp_A1b2C3d4E5f6G7h8I9j0K1l2M3n4O5p6Q7r8';
+export const GITHUB_TOKEN = 'ghp_A1b2C3d4E5f6G7h8I9j0K1l2M3n4O5p6Q7r8';
 
 // Regla esperada: detector de Azure Storage Account Key (ficticia, base64).
 export const AZURE_STORAGE_KEY =
   'Zm9vYmFyMTIzNDU2Nzg5MGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6QUJDREVGRXhhbXBsZT09';
 
 // Regla esperada: detector de Google API Key (formato AIza...).
-export const GOOGLE_API_KEY = 'TEST_AIzaSyD-EXAMPLE_fakeKey_1234567890abcdEFGH';
+export const GOOGLE_API_KEY = 'AIzaSyD-EXAMPLE_fakeKey_1234567890abcdEFGH';
 
 // Regla esperada: S2068 - JWT signing secret embebido en el código.
-export const JWT_SIGNING_SECRET = 'TEST_super-secret-jwt-signing-key-do-not-use-fake';
+export const JWT_SIGNING_SECRET = 'super-secret-jwt-signing-key-do-not-use-fake';
 
 // Regla esperada: S2068 - contraseña codificada en el código fuente.
-export const DATABASE_PASSWORD = 'TEST_P@ssw0rd_Ejemplo_Ficticio_2026';
+export const DATABASE_PASSWORD = 'P@ssw0rd_Ejemplo_Ficticio_2026';
 
 // Regla esperada: detector de Bearer token codificado.
 export const AUTHORIZATION_BEARER =
-  'TEST_ Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ZmFrZS1wYXlsb2Fk.ZmFrZS1zaWc';
+  'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ZmFrZS1wYXlsb2Fk.ZmFrZS1zaWc';
 
 /**
  * Regla esperada: detector de clave privada RSA (-----BEGIN RSA PRIVATE KEY-----).
